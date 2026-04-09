@@ -21,14 +21,25 @@ process FILTER_POSITIONS {
     def position = params.primer_length ?: 75
 
     """
-    echo "📋 Building regions file using position cutoff: ${position}"
-    awk -v pos=${position} 'BEGIN{OFS="\\t"} {print \$1, 1, pos - 1}' ${chroms} > regions.txt
+    echo "📋 Building regions file using flank cutoff: ${position}"
 
+    awk -v pos=${position} 'BEGIN{OFS="\\t"}
+        {
+            chrom=\$1
+            len=\$2
+
+            if (len <= 2 * pos) {
+                print chrom, 1, len
+            } else {
+                print chrom, 1, pos
+                print chrom, len - pos + 1, len
+            }
+        }' ${chroms} > regions.txt
 
     echo "🔍 Filtering VCF using bcftools view..."
     bcftools view \\
-        -T ^regions.txt \
-        --targets-overlap 1 \
+        -T ^regions.txt \\
+        --targets-overlap 1 \\
         --output-type z \\
         --output ${meta.id}.filtered.vcf.gz \\
         --threads $task.cpus \\

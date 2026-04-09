@@ -79,14 +79,13 @@ workflow ACAMEL_GTSEQDESIGN {
     //
     // Denovo assembly handling
     //
-    // Removes SNPs if they are not in the first ${params.primer_length}
+    // Removes SNPs if they are not at least primer_length from locus boundaries
     // number of bases (for denovo assembled loci only)
     // This forces primer+variant to be fully contained ONLY within the sequences locus
     // Otherwise, flanking sequence will be inferred using the provided reference
     if ( params.fully_contained ) {
-        // Get list of denovo loci
-        LIST_CHROMS( ch_filtered_vcf, ch_filtered_tbi )
-        ch_versions = ch_versions.mix ( LIST_CHROMS.out.versions )
+        // Get list of denovo loci and their lengths
+        LIST_CHROMS( ch_ref_ready )
 
         FILTER_POSITIONS(
             ch_filtered_vcf,

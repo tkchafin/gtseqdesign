@@ -15,6 +15,7 @@ process SUBSET_BY_INDEX {
     output:
     tuple val(meta), path("${meta.id}.selected.vcf.gz"), emit: vcf
     tuple val(meta), path("${meta.id}.selected.vcf.gz.tbi"), emit: tbi, optional: true
+    tuple val(meta), path("targets.txt"), emit: targets
     path "versions.yml", emit: versions
 
     script:

@@ -1,0 +1,78 @@
+
+---
+title: 'aCaMEL/gtseqdesign: A NextFlow DSL2 pipeline for designing GTSeq assays from genotyped SNP data'
+tags:
+
+- Nextflow
+- GT-seq
+- Genomics
+- SNP assays
+authors:
+- name: Tyler K. Chafin
+    orcid: 0000-0002-6629-0173
+    affiliation: 1
+affiliations:
+- name: Department of Biological Sciences, University of Arkansas, Fayetteville, Arkansas, United States of America.
+   index: 1
+date: 25 June 2025
+bibliography: paper.bib
+
+---
+
+# Summary
+
+Advances in next-generation sequencing (NGS) have lowered technical barriers and made genome-scale inquiry accessible to researchers working in diverse non-model organisms. However, many application areas - such as wildlife conservation, agriculture, and aquaculture - involve very large cohorts, so per-sample costs associated with whole-genome sequencing remains prohibitive; moreover, DNA obtained from non-invasive, low-yield, or highly fragmented material often precludes amplication-free library preparation (<CITE>). Targeted enrichment methods (<CITE>) address both challenges by focusing effort on a curated panel of loci, thereby reducing costs while retaining maximal information content, and accommodating lower-quality DNA. Numerous such approaches have been developed, each offering a different balance of throughput, panel flexibility and cost profiles. For use cases where the number of loci is small (hundreds) and the number of samples is high (hundreds to thousands), Genotyping-by-Thousands (GT-seq)(<CITE>), a highly multiplexed amplicon sequencing protocol, is rapidly gaining popularity <for applications from X to Y...?>
+
+How it works (in general)
+Requires previous identification of loci -- often through higher density sequencing of a smaller number of individuals. Should be chosen to reduce ascertainment bias (Garrett et al 2024)
+Cost and importance of panel design -- loci should be chosen to minimize analytical discordance between the full and reduced set
+Steps taken in panel design
+Challenges
+
+
+
+# Statement of Need
+
+The complexity of sequencing data analysis, especially with the advent of next-generation sequencing (NGS), has created a demand for robust, scalable, and reproducible workflows that can handle large datasets while allowing users to flexibly choose their preferred analysis tools. Numerous bioinformatics analyses rely on the quality of read alignment, having a major role in the reliability of the downstream results. Each alignment tool has its own strengths and weaknesses. Users may need to try out several alignment tools in order to achieve optimal results specific to the project's requirements. AliNe empowers researchers with a single-entry point for alignment, eliminating the need to juggle between disparate tools. By integrating multiple aligners into a unified pipeline, AliNe simplifies the process of alignment algorithm selection and establishes a standardized workflow that ensures both reproducibility and transparency across analyses.
+
+Majority of pipelines integrating read alignment steps are tailored to specific sequencing technologies and types of analyses [@tronflow] [@nfcorernaseq] [@sarek] [@readmapping]. There remains a lack of unified, versatile workflows capable of integrating aligners into a single, user-friendly platform. AliNe addresses this challenge by providing a comprehensive, streamlined solution for alignment tasks across a wide range of sequencing technologies, whatever the field of application.
+Furthermore, leveraging the concept of daisy-chaining Nextflow workflows [@nfcascade], AliNe can be integrated as a sub-workflow within other Nextflow pipelines [@daisychainingaline], providing a standardized alignment step while offering a diverse selection of alignment tools.
+
+# Methods
+
+# Workflow overview
+
+Nextflow, nf-core, containers, conda (mostly boilerplate)
+
+Inputs and outputs
+
+Steps
+1.
+2.
+3.
+
+## Usage
+
+## Outputs
+
+AliNe takes sequencing reads in FASTQ format and aligns them to a user-supplied reference genome in FASTA format, using user-selected aligners.
+The workflow is fully configurable to accommodate various data types and gives users the ability to fine-tune tool alignment parameters independently. Nevertheless, AliNe is designed to minimize user inputs and avoid common mistakes like the definition of scoring system used by the sequencing machine (Phred+33, Phred+64, and Solexa) or, in the case of RNAseq data, the strandedness (stranded or unstranded) or the orientation in case of paired-end reads (forward reverse i.e., fr; reverse forward i.e., rf; forward forward i.e., ff). If not provided by the user, AliNe will deduce this information and adapt the option of the different downstream aligners accordingly. AliNe suggests also a proper aligner, depending on the input data provided.
+
+To run AliNe you need to select one or several aligners and specify the type of input data: short single-end reads, short paired-end reads, long reads generated by PacBio or long reads generated by Oxford Nanopore Technologies (ONT).
+AliNe integrates an optional read trimming step using Fastp [@fastp].
+It also includes optional quality control at every stage with FastQC [@fastqc]. For RNA-seq data, the pipeline automatically detects the library type (strandedness and orientation) via Salmon [@salmon] and configures the appropriate parameters for downstream alignment tools accordingly.
+Additionally, AliNe uses SeqKit [@seqkit] to detect the sequence quality scoring system and standardizes it to Phred+33 if necessary. Once preprocessing is complete, alignment is performed using the aligners selected by the user. Finally, with the help of Samtools [@samtools], AliNe outputs the aligned reads in sorted BAM format, ready for downstream analyses such as variant calling, gene expression quantification, or structural variation detection.
+The final stage resumes all FastQC analyses and logs output from compatible aligners using MultiQC [@multiqc].
+All these steps are summarized in Figure 1.
+
+The pipeline supports parallel execution, ensuring efficient processing of large datasets by distributing tasks across available CPU cores. With Nextflow's inherent support for reproducibility, users can confidently rerun analyses with consistent results.
+
+The pipeline is modular, enabling future expansion and the integration of additional tools or customization of downstream analysis steps. Users can adapt AliNe to their specific research needs, whether for RNA-seq, ChIP-seq, or whole-genome resequencing projects.
+
+![Overview of the different steps implemented in AliNe.](aline_overview.png)
+
+## Availability
+
+AliNe is freely available under an open-source license. The source code, along with detailed documentation and examples, can be found at [https://github.com/Juke34/AliNe](https://github.com/Juke34/AliNe). Contributions and community feedback are welcome.
+
+# References
